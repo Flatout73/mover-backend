@@ -15,7 +15,7 @@ public func configure(_ app: Application) async throws {
     } else {
         var config = TLSConfiguration.makeClientConfiguration()
         config.certificateVerification = .none
-        var postgresConfig = try SQLPostgresConfiguration(
+        let postgresConfig = try SQLPostgresConfiguration(
             hostname: Environment.get("DATABASE_HOST") ?? "localhost",
             port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? SQLPostgresConfiguration.ianaPortNumber,
             username: Environment.get("DATABASE_USERNAME") ?? "vexa",

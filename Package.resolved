@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MoverTeam/BindleShared.git",
       "state" : {
-        "revision" : "cf18dd223c4b52c34c52bce4598fb2bdb7bd94e3",
-        "version" : "0.0.1"
+        "revision" : "e5d3f77bd9a3034a6d6f94eb0352bbf1cacce63f",
+        "version" : "0.0.2"
       }
     },
     {
