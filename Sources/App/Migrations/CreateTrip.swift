@@ -19,6 +19,7 @@ struct CreateTrip: AsyncMigration {
             .field(.notes, .string)
             .field(.date, .date)
             .field(.meetingPoint, .string)
+            .field(.contactType, .string)
             .field(.user, .uuid, .references("users", "id", onDelete: .cascade))
             .create()
     }
