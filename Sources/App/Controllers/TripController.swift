@@ -56,8 +56,8 @@ struct TripController: RouteCollection {
         }
         let body = try req.content.decode(TripRequestBody.self)
         
-        let trip = Trip(date: body.date, destination: body.destination, bagType: [body.bagType],
-                        bagTypeCost: [body.bagTypeCost], contactType: body.contactType,
+        let trip = Trip(date: body.date, destination: body.destination, bagType: Array(body.bagType),
+                        bagTypeCost: Array(body.bagTypeCost), contactType: body.contactType,
                         contactPhone: body.contactPhone, meetingPoint: body.meetingPoint, notes: body.notes,
                         user: user)
 

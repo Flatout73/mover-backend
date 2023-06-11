@@ -7,13 +7,7 @@
 
 import Vapor
 import Fluent
-
-enum Category: String, Codable {
-    case documents
-    case packages
-    case other
-}
-
+import BindleShared
 
 final class Order: Model, Content {
     static let schema = "orders"
@@ -28,7 +22,7 @@ final class Order: Model, Content {
     var destination: String
 
     @Field(key: .category)
-    var category: Category
+    var category: BindleShared.Category
 
     @OptionalField(key: .untilDate)
     var untilDate: Date?

@@ -8,6 +8,7 @@
 import Foundation
 import Fluent
 import Vapor
+import BindleShared
 
 struct OrderController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
@@ -42,7 +43,7 @@ struct OrderController: RouteCollection {
                     .filter(User.self, \User.$lastName ~~ query)
                     .filter(User.self, \User.$email ~~ query)
 
-                if let category = Category(rawValue: query) {
+                if let category = BindleShared.Category(rawValue: query) {
                     group
                         .filter(\Order.$category == (category))
                 }
