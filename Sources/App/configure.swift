@@ -9,14 +9,19 @@ public func configure(_ app: Application) async throws {
     // uncomment to serve files from /Public folder
      app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
-    app.databases.use(.postgres(configuration: SQLPostgresConfiguration(
-        hostname: Environment.get("DATABASE_HOST") ?? "localhost",
-        port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? SQLPostgresConfiguration.ianaPortNumber,
-        username: Environment.get("DATABASE_USERNAME") ?? "vexa",
-        password: Environment.get("DATABASE_PASSWORD") ?? "vapor_vexa_password",
-        database: Environment.get("DATABASE_NAME") ?? "mover",
-        tls: .prefer(try .init(configuration: .clientDefault)))
-    ), as: .psql)
+    if let databaseURL = Environment.get("DATABASE_URL") {
+        let postgresConfig = try SQLPostgresConfiguration(url: databaseURL)
+        app.databases.use(.postgres(configuration: postgresConfig), as: .psql)
+    } else {
+        app.databases.use(.postgres(configuration: SQLPostgresConfiguration(
+            hostname: Environment.get("DATABASE_HOST") ?? "localhost",
+            port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? SQLPostgresConfiguration.ianaPortNumber,
+            username: Environment.get("DATABASE_USERNAME") ?? "vexa",
+            password: Environment.get("DATABASE_PASSWORD") ?? "vapor_vexa_password",
+            database: Environment.get("DATABASE_NAME") ?? "mover",
+            tls: .prefer(try .init(configuration: .clientDefault)))
+        ), as: .psql)
+    }
 
     app.views.use(.leaf)
 
