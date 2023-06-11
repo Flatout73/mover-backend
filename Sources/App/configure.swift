@@ -22,9 +22,6 @@ public func configure(_ app: Application) async throws {
             password: Environment.get("DATABASE_PASSWORD") ?? "vapor_vexa_password",
             database: Environment.get("DATABASE_NAME") ?? "mover",
             tls: .prefer(.init(configuration: config)))
-        //postgresConfig.coreConfiguration.tls.sslContext = .init(configuration: .makeClientConfiguration())
-        //postgresConfig.coreConfiguration.tls = .disable
-        //postgresConfig.coreConfiguration.tls.certificateVerification = .none
         app.databases.use(.postgres(configuration: postgresConfig), as: .psql)
 
     }
@@ -38,7 +35,7 @@ public func configure(_ app: Application) async throws {
 
     Task {
         //if app.environment == .development {
-        try! await app.autoMigrate().get()
+        try await app.autoMigrate().get()
             //try app.queues.startInProcessJobs()
         //}
         try? await user.save(on: app.db)
