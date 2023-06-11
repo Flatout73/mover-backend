@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for mover on 2023-06-11T18:00:55+02:00
+# fly.toml app configuration file generated for mover on 2023-06-11T19:21:01+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = "mover"
-primary_region = "otp"
+primary_region = "waw"
 
 [http_service]
   internal_port = 8080

@@ -25,7 +25,7 @@ struct AuthenticationController: RouteCollection {
 
         let existingUser: User?
         let password = UUID().uuidString
-        if let email {
+        if let email = email {
             existingUser = try await User
                 .query(on: req.db)
                 .filter(\User.$email == email)
