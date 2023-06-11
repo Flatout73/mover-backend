@@ -8,19 +8,8 @@
 import Foundation
 import Vapor
 import Fluent
+import BindleShared
 
-enum BagType: String, Codable {
-    case hand
-    case baggage
-    case additionalBaggage
-}
-
-enum ContactType: String, Codable {
-    case telegram
-    case whatsapp
-    case mobile
-    case email
-}
 
 final class Trip: Model, Content {
     static let schema = "trips"
@@ -35,10 +24,13 @@ final class Trip: Model, Content {
     var destination: String
 
     @Field(key: .bagType)
-    var bagType: BagType
+    var bagType: [BagType]
 
     @Field(key: .bagTypeCost)
-    var bagTypeCost: BagType
+    var bagTypeCost: [BagType]
+
+    @Field(key: .contactType)
+    var contactType: ContactType
 
     @OptionalField(key: .contactPhone)
     var contactPhone: String?
@@ -65,4 +57,5 @@ extension FieldKey {
     static let user: FieldKey = "user"
     static let date: FieldKey = "date"
     static let meetingPoint: FieldKey = "meetingPoint"
+    static let contactType: FieldKey = "contactType"
 }

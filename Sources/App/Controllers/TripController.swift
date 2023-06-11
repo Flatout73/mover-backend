@@ -8,6 +8,7 @@
 import Foundation
 import Fluent
 import Vapor
+import BindleShared
 
 struct TripController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
@@ -41,11 +42,11 @@ struct TripController: RouteCollection {
                     .filter(User.self, \User.$lastName ~~ query)
                     .filter(User.self, \User.$email ~~ query)
 
-                if let type = BagType(rawValue: query) {
-                    group
-                        .filter(\Trip.$bagType == (type))
-                        .filter(\Trip.$bagTypeCost == (type))
-                }
+//                if let type = BagType(rawValue: query) {
+//                    group
+//                        .filter(\Trip.$bagType == (type))
+//                        .filter(\Trip.$bagTypeCost == (type))
+//                }
             })
             .all()
 
