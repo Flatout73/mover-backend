@@ -18,7 +18,7 @@ final class Trip: Model, Content {
     var id: UUID?
 
     @Field(key: .date)
-    var date: String
+    var date: Date
 
     @Field(key: .destination)
     var destination: String
@@ -46,6 +46,21 @@ final class Trip: Model, Content {
 
 
     init() { }
+
+    init(id: UUID? = nil, date: Date, destination: String, bagType: [BagType],
+         bagTypeCost: [BagType], contactType: ContactType, contactPhone: String? = nil,
+         meetingPoint: String? = nil, notes: String? = nil, user: User) {
+        self.id = id
+        self.date = date
+        self.destination = destination
+        self.bagType = bagType
+        self.bagTypeCost = bagTypeCost
+        self.contactType = contactType
+        self.contactPhone = contactPhone
+        self.meetingPoint = meetingPoint
+        self.notes = notes
+        self.user = user
+    }
 }
 
 extension FieldKey {

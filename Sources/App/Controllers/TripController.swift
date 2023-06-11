@@ -12,12 +12,12 @@ import BindleShared
 
 struct TripController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        let auth = routes
+        let trip = routes
             .grouped("trips")
 
-        auth
+        trip
             .get(use: trips)
-        auth
+        trip
             .grouped(UserAuthenticator())
             .grouped(User.guardMiddleware())
             .post("create", use: createTrip)
@@ -38,15 +38,11 @@ struct TripController: RouteCollection {
                 group.filter(\Trip.$destination ~~ query)
                     .filter(\Trip.$contactPhone ~~ query)
                     .filter(\Trip.$notes ~~ query)
+                    .filter(DatabaseQuery.Field.path(["bagType"], schema: "trips"), .custom("&&"), DatabaseQuery.Value.custom("'{\"\(query)\"}'"))
+                    .filter(DatabaseQuery.Field.path(["bagTypeCost"], schema: "trips"), .custom("&&"), DatabaseQuery.Value.custom("'{\"\(query)\"}'"))
                     .filter(User.self, \User.$firstName ~~ query)
                     .filter(User.self, \User.$lastName ~~ query)
                     .filter(User.self, \User.$email ~~ query)
-
-//                if let type = BagType(rawValue: query) {
-//                    group
-//                        .filter(\Trip.$bagType == (type))
-//                        .filter(\Trip.$bagTypeCost == (type))
-//                }
             })
             .all()
 
@@ -55,8 +51,17 @@ struct TripController: RouteCollection {
     }
 
     func createTrip(req: Request) async throws -> Trip {
-        let trip = Trip()
+        guard let user = req.auth.get(User.self) else {
+            throw Abort(.unauthorized)
+        }
+        let body = try req.content.decode(TripRequestBody.self)
+        
+        let trip = Trip(date: body.date, destination: body.destination, bagType: [body.bagType],
+                        bagTypeCost: [body.bagTypeCost], contactType: body.contactType,
+                        contactPhone: body.contactPhone, meetingPoint: body.meetingPoint, notes: body.notes,
+                        user: user)
 
+        try await trip.save(on: req.db)
         return trip
     }
 }
