@@ -40,7 +40,7 @@ final class Order: Model, Content {
     var user: User
 
     init(id: UUID? = nil, origin: String, destination: String, category: BindleShared.Category,
-         contactPhone: String, untilDate: Date? = nil,  notes: String? = nil,
+         contactPhone: String, untilDate: Date? = nil, notes: String? = nil,
          contactType: ContactType? = nil) {
         self.id = id
         self.origin = origin

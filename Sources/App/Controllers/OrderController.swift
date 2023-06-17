@@ -66,7 +66,7 @@ struct OrderController: RouteCollection {
                           contactType: body.contactType)
 
         order.$user.id = try user.requireID()
-        order.save(on: req.db)
+        try await order.save(on: req.db)
         
         return order
     }

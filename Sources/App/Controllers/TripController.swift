@@ -20,7 +20,7 @@ struct TripController: RouteCollection {
         trip
             .grouped(UserAuthenticator())
             .grouped(User.guardMiddleware())
-            .post("create", use: createTrip)
+            .put("create", use: createTrip)
 
         trip
             .grouped(UserAuthenticator())
@@ -76,15 +76,12 @@ struct TripController: RouteCollection {
             throw Abort(.unauthorized)
         }
         let body = try req.content.decode(TripRequestBody.self)
+        try await user.$trips.load(on: req.db)
 
-        guard let trip = user.trips.first(where: { $0.id == body.id }) else {
+        guard let trip = user.trips.first(where: { $0.id?.uuidString == body.id }) else {
             throw Abort(.notFound)
         }
-
-        let trip = Trip(date: body.date, destination: body.destination, bagType: Array(body.bagType),
-                        bagTypeCost: Array(body.bagTypeCost), contactType: body.contactType,
-                        contactPhone: body.contactPhone, meetingPoint: body.meetingPoint, notes: body.notes)
-
+        
         trip.date = body.date
         trip.destination = body.destination
         trip.bagType = Array(body.bagType)
