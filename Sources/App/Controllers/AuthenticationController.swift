@@ -40,6 +40,8 @@ struct AuthenticationController: RouteCollection {
             existingUser?.password = password
         }
 
+        print("Apple login with an existing user: ", existingUser)
+
         let user = existingUser ?? User(firstName: siwa.givenName ?? "John",
                                         lastName: siwa.familyName ?? "Doe",
                                         email: email ?? "",
@@ -67,6 +69,8 @@ struct AuthenticationController: RouteCollection {
         } else {
             existingUser = nil
         }
+
+        print("Google login with an existing user: ", existingUser)
 
         let user = existingUser ?? User(firstName: googleIDToken.givenName ?? "John",
                                         lastName: googleIDToken.familyName ?? "Doe",

@@ -36,9 +36,10 @@ struct TripController: RouteCollection {
                 .all()
         }
 
-        let orders = try await Trip
+        print("Search trips", query)
+        let trips = try await Trip
             .query(on: req.db)
-            .join(User.self, on: \Trip.$user.$id == \Trip.$id)
+            .join(User.self, on: \Trip.$user.$id == \User.$id)
             .group(.or, { group in
                 group.filter(\Trip.$destination ~~ query)
                     .filter(\Trip.$contactPhone ~~ query)
@@ -52,13 +53,15 @@ struct TripController: RouteCollection {
             .all()
 
 
-        return orders
+        return trips
     }
 
     func createTrip(req: Request) async throws -> Trip {
         guard let user = req.auth.get(User.self) else {
             throw Abort(.unauthorized)
         }
+        print("Trip creation for user", user)
+
         let body = try req.content.decode(TripRequestBody.self)
         
         let trip = Trip(date: body.date, destination: body.destination, bagType: Array(body.bagType),
@@ -81,6 +84,8 @@ struct TripController: RouteCollection {
         guard let trip = user.trips.first(where: { $0.id?.uuidString == body.id }) else {
             throw Abort(.notFound)
         }
+
+        print("Edit trip", trip)
         
         trip.date = body.date
         trip.destination = body.destination
