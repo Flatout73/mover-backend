@@ -55,8 +55,19 @@ struct OrderController: RouteCollection {
     }
 
     func createOrder(req: Request) async throws -> Order {
-        let order = Order()
+        guard let user = req.auth.get(User.self) else {
+            throw Abort(.unauthorized)
+        }
+        let body = try req.content.decode(OrderRequestBody.self)
 
+        let order = Order(origin: body.origin, destination: body.destination,
+                          category: body.category, contactPhone: body.contactPhone,
+                          untilDate: body.untilDate, notes: body.notes,
+                          contactType: body.contactType)
+
+        order.$user.id = try user.requireID()
+        order.save(on: req.db)
+        
         return order
     }
 }

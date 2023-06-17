@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MoverTeam/BindleShared.git",
       "state" : {
-        "revision" : "e5d3f77bd9a3034a6d6f94eb0352bbf1cacce63f",
-        "version" : "0.0.2"
+        "revision" : "f132023af46bdf66ddcb49121b51f1688aecd3e2",
+        "version" : "0.0.5"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/jwt-kit.git",
       "state" : {
-        "revision" : "268cdf5e7f524f859bcf94d25a106e942e210075",
-        "version" : "4.10.0"
+        "revision" : "8b3a69c396d2bd0234c4ed4c50cb85da00bdc1bc",
+        "version" : "4.11.0"
       }
     },
     {
