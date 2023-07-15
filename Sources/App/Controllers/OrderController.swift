@@ -20,7 +20,7 @@ struct OrderController: RouteCollection {
         auth
             .grouped(UserAuthenticator())
             .grouped(User.guardMiddleware())
-            .post("create", use: createOrder)
+            .put("create", use: createOrder)
     }
 
     func orders(req: Request) async throws -> [Order] {

@@ -25,19 +25,18 @@ struct AuthenticationController: RouteCollection {
         let email = appleIdentity.email ?? siwa.email
 
         let existingUser: User?
-        let password = UUID().uuidString
         if let email = email {
             existingUser = try await User
                 .query(on: req.db)
                 .filter(\User.$email == email)
                 .first()
-            existingUser?.password = password
+            //existingUser?.password = password
         } else {
             existingUser = try await User
                 .query(on: req.db)
                 .filter(\User.$appleIdentifier == appleIdentity.subject.value)
                 .first()
-            existingUser?.password = password
+            //existingUser?.password = password
         }
 
         print("Apple login with an existing user: ", existingUser)
@@ -45,6 +44,7 @@ struct AuthenticationController: RouteCollection {
         let user = existingUser ?? User(firstName: siwa.givenName ?? "John",
                                         lastName: siwa.familyName ?? "Doe",
                                         email: email ?? "",
+                                        password: UUID().uuidString,
                                         appleIdentifier: appleIdentity.subject.value)
         user.emailVerified = .apple
 
@@ -59,13 +59,12 @@ struct AuthenticationController: RouteCollection {
         let email = googleIDToken.email ?? google.email
 
         let existingUser: User?
-        let password = UUID().uuidString
         if let email = email {
             existingUser = try await User
                 .query(on: req.db)
                 .filter(\User.$email == email)
                 .first()
-            existingUser?.password = password
+            // existingUser?.password = password
         } else {
             existingUser = nil
         }
@@ -74,7 +73,8 @@ struct AuthenticationController: RouteCollection {
 
         let user = existingUser ?? User(firstName: googleIDToken.givenName ?? "John",
                                         lastName: googleIDToken.familyName ?? "Doe",
-                                        email: email ?? "")
+                                        email: email ?? "",
+                                        password: UUID().uuidString)
         user.emailVerified = .google
         try await user.save(on: req.db)
 
