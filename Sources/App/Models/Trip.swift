@@ -72,3 +72,13 @@ extension FieldKey {
     static let meetingPoint: FieldKey = "meetingPoint"
     static let contactType: FieldKey = "contactType"
 }
+
+extension Trip: Hashable {
+    static func == (lhs: Trip, rhs: Trip) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}

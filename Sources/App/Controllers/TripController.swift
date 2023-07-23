@@ -54,7 +54,7 @@ struct TripController: RouteCollection {
                     .filter(CityPoint.self, \CityPoint.$name, .custom("ilike"), "%\(query)%")
             })
             .with(\.$path)
-            .sort(\.$date)
+            .sort(\.$date, .descending)
             .all()
 
 
@@ -81,10 +81,13 @@ struct TripController: RouteCollection {
                 }
             })
             .with(\.$path)
-            .sort(\.$date)
+            .sort(\.$date, .descending)
+            .unique()
             .all()
 
-        return trips.filter({
+        // TODO: Refactor to SQL to avoid unique and manual comparison
+        return Array(trips.uniqued())
+            .filter({
             let originIndex = $0.path.firstIndex(where: { $0.name == origin }) ?? 0
             let lastIndex = $0.path.lastIndex(where: { $0.name == destination }) ?? $0.path.count
 
@@ -96,7 +99,7 @@ struct TripController: RouteCollection {
         return try await Trip
             .query(on: req.db)
             .with(\.$path)
-            .sort(\.$date)
+            .sort(\.$date, .descending)
             .paginate(for: req)
     }
 
