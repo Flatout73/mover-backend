@@ -12,7 +12,6 @@ struct CreateTrip: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema("trips")
             .id()
-            .field(.destination, .string)
             .field(.bagType, .array(of: .string))
             .field(.bagTypeCost, .array(of: .string), .required)
             .field(.contactPhone, .string)

@@ -23,12 +23,20 @@ public func configure(_ app: Application) async throws {
             database: Environment.get("DATABASE_NAME") ?? "mover",
             tls: .prefer(.init(configuration: config)))
         app.databases.use(.postgres(configuration: postgresConfig), as: .psql)
-
     }
+
+    let corsConfiguration = CORSMiddleware.Configuration(
+        allowedOrigin: .all,
+        allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
+        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent, .accessControlAllowOrigin]
+    )
+    let cors = CORSMiddleware(configuration: corsConfiguration)
+    // cors middleware should come before default error middleware using `at: .beginning`
+    app.middleware.use(cors, at: .beginning)
 
     app.views.use(.leaf)
 
-    app.migrations.add(CreateUser(), CreateOrder(), CreateTrip())
+    app.migrations.add(CreateUser(), CreateOrder(), CreateTrip(), CreateCityPoint())
 
     let user = User(id: UUID(uuidString: "669C7011-E716-492D-80AF-ADBECDAADBA1"), firstName: "Test", lastName: "Test",
                     email: "leonid173m@gmail.com", password: "123456", emailVerified: .google)

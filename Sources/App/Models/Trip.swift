@@ -20,9 +20,6 @@ final class Trip: Model, Content {
     @Field(key: .date)
     var date: Date
 
-    @Field(key: .destination)
-    var destination: String
-
     @Field(key: .bagType)
     var bagType: [BagType]
 
@@ -44,15 +41,17 @@ final class Trip: Model, Content {
     @Parent(key: .user)
     var user: User
 
+    @Children(for: \CityPoint.$trip)
+    var path: [CityPoint]
+
 
     init() { }
 
-    init(id: UUID? = nil, date: Date, destination: String, bagType: [BagType],
+    init(id: UUID? = nil, date: Date, bagType: [BagType],
          bagTypeCost: [BagType], contactType: ContactType, contactPhone: String,
          meetingPoint: String? = nil, notes: String? = nil) {
         self.id = id
         self.date = date
-        self.destination = destination
         self.bagType = bagType
         self.bagTypeCost = bagTypeCost
         self.contactType = contactType

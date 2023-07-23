@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MoverTeam/BindleShared.git",
       "state" : {
-        "revision" : "f132023af46bdf66ddcb49121b51f1688aecd3e2",
-        "version" : "0.0.5"
+        "revision" : "300f832acc3649df6c5a336c03c23e9d88d96062",
+        "version" : "0.0.7"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/fluent-kit.git",
       "state" : {
-        "revision" : "2d7dce5cb04156eecdb17e7349f4eac4206e8a17",
-        "version" : "1.42.4"
+        "revision" : "cee27b81cbda867642604021cdf01aaee8d2b0f0",
+        "version" : "1.43.1"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/fluent-postgres-driver.git",
       "state" : {
-        "revision" : "bb3ab8e861152157f712cd08fc473e885bd0b4df",
-        "version" : "2.7.2"
+        "revision" : "a538fc647f82d915eb84e0a12ca9b08c513e57c4",
+        "version" : "2.8.0"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/jwt-kit.git",
       "state" : {
-        "revision" : "8b3a69c396d2bd0234c4ed4c50cb85da00bdc1bc",
-        "version" : "4.11.0"
+        "revision" : "9e929d925434b91857661bcd455d1bd53f00bf22",
+        "version" : "4.13.0"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/postgres-kit.git",
       "state" : {
-        "revision" : "a88d025748edd3a2f9f2e74091ecccc20d20fe30",
-        "version" : "2.11.3"
+        "revision" : "b69f427924b00718e8190701e4f410e9c0823770",
+        "version" : "2.11.4"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/postgres-nio.git",
       "state" : {
-        "revision" : "061a0836d7c1887e04a975d1d2eaa2ef5fd7dfab",
-        "version" : "1.16.0"
+        "revision" : "aa9273c06a0f42281635eaf0400aa024157c8fa9",
+        "version" : "1.17.0"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/sql-kit.git",
       "state" : {
-        "revision" : "5026e7c0f2e464ea1af9f5948701aa8922ab14eb",
-        "version" : "3.27.0"
+        "revision" : "b2f128cb62a3abfbb1e3b2893ff3ee69e70f4f0f",
+        "version" : "3.28.0"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-metrics.git",
       "state" : {
-        "revision" : "34025104068262db0cc998ace178975c5ff4f36b",
-        "version" : "2.4.0"
+        "revision" : "971ba26378ab69c43737ee7ba967a896cb74c0d1",
+        "version" : "2.4.1"
       }
     },
     {
@@ -212,8 +212,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "6213ba7a06febe8fef60563a4a7d26a4085783cf",
-        "version" : "2.54.0"
+        "revision" : "5f542894dd8efbd766d8adf73ef2f947b0cd5e21",
+        "version" : "2.56.0"
       }
     },
     {
@@ -266,8 +266,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "9a340de4995e5a9dade4ff4c51cd2e6ae30c12d6",
-        "version" : "4.77.0"
+        "revision" : "e98077ddd1e3535bea6c9514f99d57463816c3bd",
+        "version" : "4.77.2"
       }
     },
     {
