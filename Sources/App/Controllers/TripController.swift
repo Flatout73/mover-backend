@@ -89,16 +89,18 @@ struct TripController: RouteCollection {
             .all()
 
 
-        if let origin, let destination {
+        if let origin = origin?.lowercased(), let destination = destination?.lowercased() {
             var newTrips: [Trip] = []
             var sameOneCityTrips: [Trip] = []
 
             for (i, trip) in trips.enumerated() {
-                if i != trips.lastIndex(of: trip) {
-                    if trip.path.firstIndex(where: { $0.name.contains("\(origin.lowercased)") }) ?? 0 < trip.path.firstIndex(where: { $0.name.contains("\(destination.lowercased)") }) ?? trip.path.count {
+                if i != trips.lastIndex(of: trip) { // если больше одного вхождения трипа
+                    // если destination идет после origin
+                    if (trip.path.firstIndex(where: { $0.name.lowercased().contains(origin) }) ?? 0) < (trip.path.firstIndex(where: { $0.name.lowercased().contains(destination) }) ?? trip.path.count) {
                         newTrips.append(trip)
                     }
-                } else if trip.path.last?.name.contains("\(origin)") == false, trip.path.first?.name.contains("\(destination)") == false {
+                // если последняя точка не равна origin, а первая не равна destination
+                } else if trip.path.last?.name.lowercased().contains(origin) == false, trip.path.first?.name.lowercased().contains(destination) == false {
                     sameOneCityTrips.append(trip)
                 }
             }
