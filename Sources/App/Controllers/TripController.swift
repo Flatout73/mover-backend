@@ -9,6 +9,12 @@ import Foundation
 import Fluent
 import Vapor
 import BindleShared
+import SQLKit
+
+struct TripFilterResult: Content {
+    let trips: [Trip]
+    let isExactResults: Bool
+}
 
 struct TripController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
@@ -61,38 +67,80 @@ struct TripController: RouteCollection {
         return trips
     }
 
-    func filterTrips(req: Request) async throws -> [Trip] {
+    func filterTrips(req: Request) async throws -> TripFilterResult {
         let origin = try? req.query.get(String.self, at: "origin")
         let destination = try? req.query.get(String.self, at: "destination")
 
         print("Filter trips", origin, destination)
-        var trips = try await Trip
-            .query(on: req.db)
-            .join(CityPoint.self, on: \CityPoint.$trip.$id == \Trip.$id)
-            .group(.or, { group in
-                if let origin {
-                    group
-                        .filter(CityPoint.self, \CityPoint.$name, .custom("ilike"), "%\(origin)%")
+
+
+//        if let postgres = req.db as? SQLDatabase {
+//            let trips = try await postgres.raw("""
+//SELECT "trips"."id" AS "trips_id", "trips"."date" AS "trips_date", "trips"."bagType" AS "trips_bagType", "trips"."bagTypeCost" AS "trips_bagTypeCost", "trips"."contactType" AS "trips_contactType", "trips"."contactPhone" AS "trips_contactPhone", "trips"."meetingPoint" AS "trips_meetingPoint", "trips"."notes" AS "trips_notes", "trips"."user" AS "trips_user", "cityPoints"."id" AS "cityPoints_id", "cityPoints"."name" AS "cityPoints_name", "cityPoints"."date" AS "cityPoints_date", "cityPoints"."trip" AS "cityPoints_trip"
+//FROM "trips" INNER JOIN "cityPoints" ON "trips"."id" = "cityPoints"."trip" WHERE ("cityPoints"."name" ilike 'Moscow' OR "cityPoints"."name" ilike '\(destination!)') GROUP BY trips_id, cityPoints.id ORDER BY "trips"."date" DESC;
+//""").all(decoding: Trip.self)
+//            return trips
+//        } else {
+
+            let trips = try await Trip
+                .query(on: req.db)
+            //.join(CityPoint.self, on: \Trip.$id == \CityPoint.$trip.$id, method: .inner)
+            // .filter(CityPoint.self, \CityPoint.$name, .custom("ilike"), "%\(origin)%")
+            // .filter(CityPoint.self, \CityPoint.$name, .custom("ilike"), "%\(destination)%")
+
+
+
+                .join(CityPoint.self, on: \Trip.$id == \CityPoint.$trip.$id)
+                .filter(\Trip.$date >= Date())
+                .group(.or, { group in
+                    if let origin {
+                        group
+                            .filter(CityPoint.self, \CityPoint.$name, .custom("ilike"), "%\(origin)%")
+                    }
+
+                    if let destination {
+                        group
+                            .filter(CityPoint.self, \CityPoint.$name, .custom("ilike"), "%\(destination)%")
+                    }
+                })
+                .sort(\.$date)
+                .unique()
+                .with(\.$path)
+                .all()
+
+
+        if let origin, let destination {
+            var newTrips: [Trip] = []
+            var sameOneCityTrips: [Trip] = []
+
+            for (i, trip) in trips.enumerated() {
+
+                if i != trips.lastIndex(of: trip) {
+                    if trip.path.firstIndex(where: { $0.name.contains("\(origin.lowercased)") }) ?? 0 < trip.path.firstIndex(where: { $0.name.contains("\(destination.lowercased)") }) ?? trip.path.count {
+                        newTrips.append(trip)
+                    }
+                } else if trip.path.last?.name.contains("\(origin)") == false, trip.path.first?.name.contains("\(destination)") == false {
+                    sameOneCityTrips.append(trip)
                 }
+            }
 
-                if let destination {
-                    group
-                        .filter(CityPoint.self, \CityPoint.$name, .custom("ilike"), "%\(destination)%")
-                }
-            })
-            .with(\.$path)
-            .sort(\.$date, .descending)
-            .unique()
-            .all()
+            if newTrips.isEmpty {
+                return TripFilterResult(trips: sameOneCityTrips, isExactResults: false)
+            } else {
+                return TripFilterResult(trips: newTrips, isExactResults: true)
+            }
+        } else {
+            return TripFilterResult(trips: trips, isExactResults: true)
+        }
 
-        // TODO: Refactor to SQL to avoid unique and manual comparison
-        return Array(trips.uniqued())
-            .filter({
-            let originIndex = $0.path.firstIndex(where: { $0.name == origin }) ?? 0
-            let lastIndex = $0.path.lastIndex(where: { $0.name == destination }) ?? $0.path.count
-
-            return lastIndex > originIndex
-        })
+//            return trips
+//                .filter({
+//                    let originIndex = $0.path.firstIndex(where: { $0.name == origin }) ?? 0
+//                    let lastIndex = $0.path.lastIndex(where: { $0.name == destination }) ?? $0.path.count
+//
+//                    return lastIndex > originIndex
+//                })
+//        }
     }
 
     func trips(req: Request) async throws -> Page<Trip> {

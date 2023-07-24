@@ -14,7 +14,7 @@ struct CreateCityPoint: AsyncMigration {
             .id()
             .field(.name, .string, .required)
             .field(.date, .date)
-            .field(.path, .uuid, .references("trips", "id", onDelete: .cascade))
+            .field(.trip, .uuid, .references("trips", "id", onDelete: .cascade))
             .create()
     }
 

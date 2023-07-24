@@ -20,7 +20,7 @@ final class CityPoint: Model, Content {
     @OptionalField(key: .date)
     var date: Date?
 
-    @Parent(key: .path)
+    @Parent(key: .trip)
     var trip: Trip
 
     init() { }
@@ -29,5 +29,5 @@ final class CityPoint: Model, Content {
 
 extension FieldKey {
     static let name: FieldKey = "name"
-    static let path: FieldKey = "path"
+    static let trip: FieldKey = "trip"
 }
