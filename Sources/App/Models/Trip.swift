@@ -24,7 +24,7 @@ final class Trip: Model, Content {
     var bagType: [BagType]
 
     @Field(key: .bagTypeCost)
-    var bagTypeCost: [BagType]
+    var bagTypeCost: [BagType: Int]
 
     @Field(key: .contactType)
     var contactType: ContactType
@@ -48,7 +48,7 @@ final class Trip: Model, Content {
     init() { }
 
     init(id: UUID? = nil, date: Date, bagType: [BagType],
-         bagTypeCost: [BagType], contactType: ContactType, contactPhone: String,
+         bagTypeCost: [BagType: Int], contactType: ContactType, contactPhone: String,
          meetingPoint: String? = nil, notes: String? = nil) {
         self.id = id
         self.date = date

@@ -39,6 +39,9 @@ final class User: Model, Content, Authenticatable {
     @Children(for: \Trip.$user)
     var trips: [Trip]
 
+    @Children(for: \Rating.$userTo)
+    var ratings: [Rating]
+
     init() { }
 
     init(id: UUID? = nil, firstName: String, lastName: String? = nil, email: String,

@@ -35,7 +35,7 @@ struct TripController: RouteCollection {
 
     func searchTrips(req: Request) async throws -> [Trip] {
         guard let query = try? req.query.get(String.self, at: "query") else {
-            return try await trips(req: req).items
+            return []
         }
 
         print("Search trips", query)
@@ -43,6 +43,7 @@ struct TripController: RouteCollection {
             .query(on: req.db)
             .join(User.self, on: \Trip.$user.$id == \User.$id)
             .join(CityPoint.self, on: \Trip.$id == \CityPoint.$trip.$id)
+            .filter(\Trip.$date >= Date())
             .group(.or, { group in
                 group
                     .filter(\Trip.$contactPhone ~~ query)
@@ -55,7 +56,7 @@ struct TripController: RouteCollection {
                     .filter(CityPoint.self, \CityPoint.$name, .custom("ilike"), "%\(query)%")
             })
             .with(\.$path)
-            .sort(\.$date, .descending)
+            .sort(\.$date)
             .all()
 
 
@@ -105,13 +106,9 @@ struct TripController: RouteCollection {
                 }
             }
 
-            if newTrips.isEmpty {
-                return TripFilterResult(trips: sameOneCityTrips, isExactResults: false)
-            } else {
-                return TripFilterResult(trips: newTrips, isExactResults: true)
-            }
+            return TripFilterResult(trips: newTrips, similarTrips: sameOneCityTrips)
         } else {
-            return TripFilterResult(trips: trips, isExactResults: true)
+            return TripFilterResult(trips: trips, similarTrips: [])
         }
     }
 
@@ -129,7 +126,18 @@ struct TripController: RouteCollection {
         }
         print("Trip creation for user", user)
 
-        let body = try req.content.decode(TripRequestBody.self)
+        let string = req.body.data!
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        let sts = TripRequestBody(id: "2131", date: Date(), path: [],
+                        contactPhone: "", bagType: .init(), bagTypeCost: [.hand: 123], contactType: .telegram)
+        print(String(data: try JSONEncoder().encode(sts), encoding: .utf8))
+        let body = try decoder.decode(TripRequestBody.self, from: string)
+//        let body = try req.content
+//            .decode(, as: .json)
+
+
 
         let path = body.path.map { point in
             let cityPoint = CityPoint()
@@ -139,7 +147,7 @@ struct TripController: RouteCollection {
         }
         
         let trip = Trip(date: body.date, bagType: Array(body.bagType),
-                        bagTypeCost: Array(body.bagTypeCost), contactType: body.contactType,
+                        bagTypeCost: body.bagTypeCost, contactType: body.contactType,
                         contactPhone: body.contactPhone, meetingPoint: body.meetingPoint, notes: body.notes)
 
         trip.$user.id = try user.requireID()
@@ -165,7 +173,7 @@ struct TripController: RouteCollection {
         
         trip.date = body.date
         trip.bagType = Array(body.bagType)
-        trip.bagTypeCost = Array(body.bagTypeCost)
+        trip.bagTypeCost = body.bagTypeCost
         trip.contactType =  body.contactType
         trip.contactPhone = body.contactPhone
         trip.meetingPoint = body.meetingPoint

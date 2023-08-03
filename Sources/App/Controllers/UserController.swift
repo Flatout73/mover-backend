@@ -1,5 +1,6 @@
 import Fluent
 import Vapor
+import BindleShared
 
 struct UserController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
@@ -11,6 +12,8 @@ struct UserController: RouteCollection {
         users.get("orders", use: orders)
         users.get("trips", use: trips)
         users.post("logout", use: logout)
+
+        users.put("rating", use: rating)
 //        todos.group(":todoID") { todo in
 //            todo.delete(use: delete)
 //        }
@@ -52,6 +55,31 @@ struct UserController: RouteCollection {
         let user = req.auth.get(User.self)
         user?.password = nil
         try await user?.save(on: req.db)
+
+        return "OK"
+    }
+
+    func rating(req: Request) async throws -> String {
+        guard req.auth.has(User.self) else {
+            throw Abort(.unauthorized)
+        }
+
+        let body = try req.content.decode(RatingRequestBody.self)
+
+        guard let userTo = try await User
+            .find(UUID(body.userIDTo), on: req.db),
+              let user = req.auth.get(User.self) else {
+            throw Abort(.notFound)
+        }
+
+
+        let rating = Rating()
+        rating.userFrom = user
+        rating.userTo = userTo
+        rating.rating = body.rating
+        rating.comment = body.comment
+
+        try await rating.save(on: req.db)
 
         return "OK"
     }

@@ -9,5 +9,5 @@ import Vapor
 
 struct TripFilterResult: Content {
     let trips: [Trip]
-    let isExactResults: Bool
+    let similarTrips: [Trip]
 }

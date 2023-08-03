@@ -36,7 +36,7 @@ public func configure(_ app: Application) async throws {
 
     app.views.use(.leaf)
 
-    app.migrations.add(CreateUser(), CreateOrder(), CreateTrip(), CreateCityPoint())
+    app.migrations.add(CreateUser(), CreateOrder(), CreateTrip(), CreateCityPoint(), CreateRating())
 
     let user = User(id: UUID(uuidString: "669C7011-E716-492D-80AF-ADBECDAADBA1"), firstName: "Test", lastName: "Test",
                     email: "leonid173m@gmail.com", password: "123456", emailVerified: .google)

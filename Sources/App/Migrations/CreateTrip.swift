@@ -13,7 +13,7 @@ struct CreateTrip: AsyncMigration {
         try await database.schema("trips")
             .id()
             .field(.bagType, .array(of: .string))
-            .field(.bagTypeCost, .array(of: .string), .required)
+            .field(.bagTypeCost, .dictionary(of: .int), .required)
             .field(.contactPhone, .string)
             .field(.notes, .string)
             .field(.date, .date)
