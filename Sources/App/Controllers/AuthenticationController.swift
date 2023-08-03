@@ -76,6 +76,8 @@ struct AuthenticationController: RouteCollection {
                                         email: email ?? "",
                                         password: UUID().uuidString)
         user.emailVerified = .google
+        user.imageURL = googleIDToken.picture
+        
         try await user.save(on: req.db)
 
         return user

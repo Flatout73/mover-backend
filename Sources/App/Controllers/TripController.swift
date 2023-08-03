@@ -33,7 +33,7 @@ struct TripController: RouteCollection {
             .post("edit", use: editTrip)
     }
 
-    func searchTrips(req: Request) async throws -> [Trip] {
+    func searchTrips(req: Request) async throws -> [TripResponse] {
         guard let query = try? req.query.get(String.self, at: "query") else {
             return []
         }
@@ -57,7 +57,13 @@ struct TripController: RouteCollection {
             })
             .with(\.$path)
             .sort(\.$date)
+            .with(\.$user) { user in
+                user.with(\.$ratings)
+            }
             .all()
+            .map({
+                try TripResponse(trip: $0)
+            })
 
 
         return trips
@@ -87,12 +93,18 @@ struct TripController: RouteCollection {
             .sort(\.$date)
             .unique()
             .with(\.$path)
+            .with(\.$user) { user in
+                user.with(\.$ratings)
+            }
             .all()
+            .map({
+                try TripResponse(trip: $0)
+            })
 
 
         if let origin = origin?.lowercased(), let destination = destination?.lowercased() {
-            var newTrips: [Trip] = []
-            var sameOneCityTrips: [Trip] = []
+            var newTrips: [TripResponse] = []
+            var sameOneCityTrips: [TripResponse] = []
 
             for (i, trip) in trips.enumerated() {
                 if i != trips.lastIndex(of: trip) { // если больше одного вхождения трипа
@@ -112,12 +124,18 @@ struct TripController: RouteCollection {
         }
     }
 
-    func trips(req: Request) async throws -> Page<Trip> {
+    func trips(req: Request) async throws -> Page<TripResponse> {
         return try await Trip
             .query(on: req.db)
+            .with(\.$user) { user in
+                user.with(\.$ratings)
+            }
             .with(\.$path)
             .sort(\.$date, .descending)
             .paginate(for: req)
+            .map({ trip in
+                return try TripResponse(trip: trip)
+            })
     }
 
     func createTrip(req: Request) async throws -> Trip {
@@ -126,18 +144,7 @@ struct TripController: RouteCollection {
         }
         print("Trip creation for user", user)
 
-        let string = req.body.data!
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-
-        let sts = TripRequestBody(id: "2131", date: Date(), path: [],
-                        contactPhone: "", bagType: .init(), bagTypeCost: [.hand: 123], contactType: .telegram)
-        print(String(data: try JSONEncoder().encode(sts), encoding: .utf8))
-        let body = try decoder.decode(TripRequestBody.self, from: string)
-//        let body = try req.content
-//            .decode(, as: .json)
-
-
+        let body = try req.content.decode(TripRequestBody.self)
 
         let path = body.path.map { point in
             let cityPoint = CityPoint()
@@ -146,8 +153,7 @@ struct TripController: RouteCollection {
             return cityPoint
         }
         
-        let trip = Trip(date: body.date, bagType: Array(body.bagType),
-                        bagTypeCost: body.bagTypeCost, contactType: body.contactType,
+        let trip = Trip(date: body.date, bagType: body.bagType, contactType: Array(body.contactType),
                         contactPhone: body.contactPhone, meetingPoint: body.meetingPoint, notes: body.notes)
 
         trip.$user.id = try user.requireID()
@@ -172,9 +178,8 @@ struct TripController: RouteCollection {
         print("Edit trip", trip)
         
         trip.date = body.date
-        trip.bagType = Array(body.bagType)
-        trip.bagTypeCost = body.bagTypeCost
-        trip.contactType =  body.contactType
+        trip.bagType = body.bagType
+        trip.contactType =  Array(body.contactType)
         trip.contactPhone = body.contactPhone
         trip.meetingPoint = body.meetingPoint
         trip.notes = body.notes

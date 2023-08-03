@@ -8,6 +8,6 @@
 import Vapor
 
 struct TripFilterResult: Content {
-    let trips: [Trip]
-    let similarTrips: [Trip]
+    let trips: [TripResponse]
+    let similarTrips: [TripResponse]
 }

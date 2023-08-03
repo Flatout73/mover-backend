@@ -12,13 +12,12 @@ struct CreateTrip: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema("trips")
             .id()
-            .field(.bagType, .array(of: .string))
-            .field(.bagTypeCost, .dictionary(of: .int), .required)
+            .field(.bagType, .dictionary(of: .int), .required)
             .field(.contactPhone, .string)
             .field(.notes, .string)
             .field(.date, .date)
             .field(.meetingPoint, .string)
-            .field(.contactType, .string)
+            .field(.contactType, .array(of: .string))
             .field(.user, .uuid, .references("users", "id", onDelete: .cascade))
             .create()
     }

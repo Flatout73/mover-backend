@@ -1,5 +1,6 @@
 import Fluent
 import Vapor
+import BindleShared
 
 enum EmailVerificationType: String, Codable {
     case google
@@ -24,6 +25,9 @@ final class User: Model, Content, Authenticatable {
     @OptionalField(key: .phone)
     var phone: String?
 
+    @Field(key: .contactType)
+    var contactType: [ContactType]
+
     @OptionalField(key: .password)
     var password: String?
 
@@ -32,6 +36,9 @@ final class User: Model, Content, Authenticatable {
 
     @OptionalField(key: .emailVerified)
     var emailVerified: EmailVerificationType?
+
+    @OptionalField(key: .imageURL)
+    var imageURL: String?
 
     @Children(for: \Order.$user)
     var orders: [Order]
@@ -66,4 +73,5 @@ extension FieldKey {
     static let appleIdentifier: FieldKey = "appleIdentifier"
     static let emailVerified: FieldKey = "emailVerified"
     static let password: FieldKey = "password"
+    static let imageURL: FieldKey = "imageURL"
 }

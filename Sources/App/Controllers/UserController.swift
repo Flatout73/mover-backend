@@ -23,7 +23,7 @@ struct UserController: RouteCollection {
         guard req.auth.has(User.self), let user = req.auth.get(User.self) else {
             throw Abort(.unauthorized)
         }
-
+        try await user.$ratings.load(on: req.db)
         return user
     }
 
@@ -66,16 +66,15 @@ struct UserController: RouteCollection {
 
         let body = try req.content.decode(RatingRequestBody.self)
 
-        guard let userTo = try await User
-            .find(UUID(body.userIDTo), on: req.db),
+        guard let userTo = UUID(body.userIDTo),
               let user = req.auth.get(User.self) else {
             throw Abort(.notFound)
         }
 
 
         let rating = Rating()
-        rating.userFrom = user
-        rating.userTo = userTo
+        rating.$userFrom.id = try user.requireID()
+        rating.$userTo.id = userTo
         rating.rating = body.rating
         rating.comment = body.comment
 

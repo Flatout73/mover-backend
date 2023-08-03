@@ -11,6 +11,8 @@ struct CreateUser: AsyncMigration {
             .field(.appleIdentifier, .string)
             .field(.password, .string)
             .field(.phone, .string)
+            .field(.contactType, .array(of: .string))
+            .field(.imageURL, .string)
             .unique(on: "email")
             .create()
     }

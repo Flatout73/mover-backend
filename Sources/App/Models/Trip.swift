@@ -10,7 +10,6 @@ import Vapor
 import Fluent
 import BindleShared
 
-
 final class Trip: Model, Content {
     static let schema = "trips"
 
@@ -21,16 +20,13 @@ final class Trip: Model, Content {
     var date: Date
 
     @Field(key: .bagType)
-    var bagType: [BagType]
-
-    @Field(key: .bagTypeCost)
-    var bagTypeCost: [BagType: Int]
+    var bagType: BagTypeCost
 
     @Field(key: .contactType)
-    var contactType: ContactType
+    var contactType: [ContactType]
 
     @Field(key: .contactPhone)
-    var contactPhone: String?
+    var contactPhone: String
 
     @OptionalField(key: .meetingPoint)
     var meetingPoint: String?
@@ -47,13 +43,12 @@ final class Trip: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, date: Date, bagType: [BagType],
-         bagTypeCost: [BagType: Int], contactType: ContactType, contactPhone: String,
+    init(id: UUID? = nil, date: Date, bagType: BagTypeCost,
+         contactType: [ContactType], contactPhone: String,
          meetingPoint: String? = nil, notes: String? = nil) {
         self.id = id
         self.date = date
         self.bagType = bagType
-        self.bagTypeCost = bagTypeCost
         self.contactType = contactType
         self.contactPhone = contactPhone
         self.meetingPoint = meetingPoint
@@ -64,7 +59,6 @@ final class Trip: Model, Content {
 extension FieldKey {
     static let destination: FieldKey = "destination"
     static let bagType: FieldKey = "bagType"
-    static let bagTypeCost: FieldKey = "bagTypeCost"
     static let contactPhone: FieldKey = "contactPhone"
     static let notes: FieldKey = "notes"
     static let user: FieldKey = "user"
