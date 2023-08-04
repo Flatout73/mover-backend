@@ -19,12 +19,13 @@ struct UserController: RouteCollection {
 //        }
     }
 
-    func me(req: Request) async throws -> User {
+    func me(req: Request) async throws -> UserResponse {
         guard req.auth.has(User.self), let user = req.auth.get(User.self) else {
             throw Abort(.unauthorized)
         }
         try await user.$ratings.load(on: req.db)
-        return user
+
+        return try UserResponse(user: user)
     }
 
     func orders(req: Request) async throws -> [Order] {

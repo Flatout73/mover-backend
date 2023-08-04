@@ -48,12 +48,19 @@ struct TripController: RouteCollection {
                 group
                     .filter(\Trip.$contactPhone ~~ query)
                     .filter(\Trip.$notes, .custom("ilike"), "%\(query)%")
-                    .filter(DatabaseQuery.Field.path(["bagType"], schema: "trips"), .custom("&&"), DatabaseQuery.Value.custom("'{\"\(query)\"}'"))
-                    .filter(DatabaseQuery.Field.path(["bagTypeCost"], schema: "trips"), .custom("&&"), DatabaseQuery.Value.custom("'{\"\(query)\"}'"))
+
+                    //.filter(DatabaseQuery.Field.path(["bagType"], schema: "trips"), .custom("ilike"), DatabaseQuery.Value.custom("%\(query)%"))
                     .filter(User.self, \User.$firstName, .custom("ilike"), "%\(query)%")
                     .filter(User.self, \User.$lastName, .custom("ilike"), "%\(query)%")
                     .filter(User.self, \User.$email, .custom("ilike"), "%\(query)%")
                     .filter(CityPoint.self, \CityPoint.$name, .custom("ilike"), "%\(query)%")
+
+                if let int = Int(query) {
+                    group
+                        .filter(DatabaseQuery.Field.path(["bagType"], schema: "trips"), .custom("-> 'carryOn' <="), DatabaseQuery.Value.custom("'\(int)'"))
+                        .filter(DatabaseQuery.Field.path(["bagType"], schema: "trips"), .custom("-> 'baggage' <="), DatabaseQuery.Value.custom("'\(int)'"))
+                        .filter(DatabaseQuery.Field.path(["bagType"], schema: "trips"), .custom("-> 'additionalBaggage' <="), DatabaseQuery.Value.custom("'\(int)'"))
+                }
             })
             .with(\.$path)
             .sort(\.$date)
@@ -75,7 +82,7 @@ struct TripController: RouteCollection {
 
         print("Filter trips", origin, destination)
 
-        let trips = try await Trip
+        var trips = try await Trip
             .query(on: req.db)
             .join(CityPoint.self, on: \Trip.$id == \CityPoint.$trip.$id)
             .filter(\Trip.$date >= Date())
@@ -106,16 +113,20 @@ struct TripController: RouteCollection {
             var newTrips: [TripResponse] = []
             var sameOneCityTrips: [TripResponse] = []
 
-            for (i, trip) in trips.enumerated() {
-                if i != trips.lastIndex(of: trip) { // если больше одного вхождения трипа
+            var i = 0
+            while i < trips.count {
+                let trip = trips[i]
+                if let lastIndex = trips.lastIndex(of: trip), i != lastIndex { // если больше одного вхождения трипа
                     // если destination идет после origin
                     if (trip.path.firstIndex(where: { $0.name.lowercased().contains(origin) }) ?? 0) < (trip.path.firstIndex(where: { $0.name.lowercased().contains(destination) }) ?? trip.path.count) {
                         newTrips.append(trip)
                     }
-                // если последняя точка не равна origin, а первая не равна destination
+                    trips.remove(at: lastIndex) // чтобы не попасть на этот трип еще раз
+                    // если последняя точка не равна origin, а первая не равна destination
                 } else if trip.path.last?.name.lowercased().contains(origin) == false, trip.path.first?.name.lowercased().contains(destination) == false {
                     sameOneCityTrips.append(trip)
                 }
+                i += 1
             }
 
             return TripFilterResult(trips: newTrips, similarTrips: sameOneCityTrips)
