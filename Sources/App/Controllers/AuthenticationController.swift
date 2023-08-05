@@ -41,8 +41,8 @@ struct AuthenticationController: RouteCollection {
 
         print("Apple login with an existing user: ", existingUser)
 
-        let user = existingUser ?? User(firstName: siwa.givenName ?? "John",
-                                        lastName: siwa.familyName ?? "Doe",
+        let user = existingUser ?? User(firstName: siwa.givenName,
+                                        lastName: siwa.familyName,
                                         email: email ?? "",
                                         password: UUID().uuidString,
                                         appleIdentifier: appleIdentity.subject.value)
@@ -71,8 +71,8 @@ struct AuthenticationController: RouteCollection {
 
         print("Google login with an existing user: ", existingUser)
 
-        let user = existingUser ?? User(firstName: googleIDToken.givenName ?? "John",
-                                        lastName: googleIDToken.familyName ?? "Doe",
+        let user = existingUser ?? User(firstName: googleIDToken.givenName,
+                                        lastName: googleIDToken.familyName,
                                         email: email ?? "",
                                         password: UUID().uuidString)
         user.emailVerified = .google

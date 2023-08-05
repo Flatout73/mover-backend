@@ -51,7 +51,7 @@ final class User: Model, Content, Authenticatable {
 
     init() { }
 
-    init(id: UUID? = nil, firstName: String, lastName: String? = nil, email: String,
+    init(id: UUID? = nil, firstName: String?, lastName: String? = nil, email: String,
          phone: String? = nil, password: String? = nil, appleIdentifier: String? = nil,
          emailVerified: EmailVerificationType? = nil) {
         self.id = id
