@@ -52,7 +52,8 @@ final class User: Model, Content, Authenticatable {
     init() { }
 
     init(id: UUID? = nil, firstName: String?, lastName: String? = nil, email: String,
-         phone: String? = nil, password: String? = nil, appleIdentifier: String? = nil,
+         phone: String? = nil, contactType: [ContactType] = [],
+         password: String? = nil, appleIdentifier: String? = nil,
          emailVerified: EmailVerificationType? = nil) {
         self.id = id
         self.firstName = firstName
@@ -62,6 +63,7 @@ final class User: Model, Content, Authenticatable {
         self.password = password
         self.appleIdentifier = appleIdentifier
         self.emailVerified = emailVerified
+        self.contactType = contactType
     }
 }
 
