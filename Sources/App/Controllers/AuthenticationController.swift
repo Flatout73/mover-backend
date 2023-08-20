@@ -56,24 +56,21 @@ struct AuthenticationController: RouteCollection {
     func google(req: Request) async throws -> User {
         let google = try req.content.decode(GoogleRequestBody.self)
         let googleIDToken = try await req.jwt.google.verify(google.googleIdentityToken)
-        let email = googleIDToken.email ?? google.email
-
-        let existingUser: User?
-        if let email = email {
-            existingUser = try await User
-                .query(on: req.db)
-                .filter(\User.$email == email)
-                .first()
-            // existingUser?.password = password
-        } else {
-            existingUser = nil
+        guard let email = googleIDToken.email ?? google.email else {
+            throw AuthenticationError.invalidEmailOrPassword
         }
+
+        let existingUser = try await User
+            .query(on: req.db)
+            .filter(\User.$email == email)
+            .first()
+        // existingUser?.password = password
 
         print("Google login with an existing user: ", existingUser)
 
         let user = existingUser ?? User(firstName: googleIDToken.givenName,
                                         lastName: googleIDToken.familyName,
-                                        email: email ?? "",
+                                        email: email,
                                         password: UUID().uuidString)
         user.emailVerified = .google
         user.imageURL = googleIDToken.picture
