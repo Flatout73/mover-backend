@@ -34,7 +34,7 @@ final class User: Model, Content, Authenticatable {
     @OptionalField(key: .appleIdentifier)
     var appleIdentifier: String?
 
-    @OptionalField(key: .emailVerified)
+    @OptionalEnum(key: .emailVerified)
     var emailVerified: EmailVerificationType?
 
     @OptionalField(key: .imageURL)

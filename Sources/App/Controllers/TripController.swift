@@ -18,10 +18,12 @@ struct TripController: RouteCollection {
 
         trip
             .get(use: trips)
+
         trip
             .get("filter", use: filterTrips)
         trip
             .get("search", use: searchTrips)
+
         trip
             .grouped(UserAuthenticator())
             .grouped(User.guardMiddleware())
@@ -31,6 +33,17 @@ struct TripController: RouteCollection {
             .grouped(UserAuthenticator())
             .grouped(User.guardMiddleware())
             .post("edit", use: editTrip)
+
+        trip
+            .group(":tripID") { group in
+                group
+                    .grouped(UserAuthenticator())
+                    .grouped(User.guardMiddleware())
+                    .delete(use: delete)
+
+                group
+                    .get(use: fetchTrip)
+        }
     }
 
     func searchTrips(req: Request) async throws -> [TripResponse] {
@@ -206,5 +219,32 @@ struct TripController: RouteCollection {
         try await trip.$path.create(path, on: req.db)
         
         return trip
+    }
+
+    func fetchTrip(req: Request) async throws -> Trip {
+        guard let trip = try await Trip.find(req.parameters.get("tripID"), on: req.db) else {
+            throw Abort(.notFound)
+        }
+
+        return trip
+    }
+
+    func delete(req: Request) async throws -> HTTPStatus {
+        guard let tripID = req.parameters.get("tripID") else {
+            throw Abort(.notFound)
+        }
+        guard let user = req.auth.get(User.self) else {
+            throw Abort(.unauthorized)
+        }
+
+        try await user.$trips.load(on: req.db)
+        guard let trip = user.trips.first(where: { $0.id?.uuidString == tripID }) else {
+            throw Abort(.notFound)
+        }
+        print("Deleting trip with id: \(tripID)")
+
+        try await trip.delete(on: req.db)
+
+        return .ok
     }
 }

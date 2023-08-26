@@ -14,9 +14,6 @@ struct UserController: RouteCollection {
         users.post("logout", use: logout)
 
         users.put("rating", use: rating)
-//        todos.group(":todoID") { todo in
-//            todo.delete(use: delete)
-//        }
     }
 
     func me(req: Request) async throws -> UserResponse {
@@ -60,7 +57,7 @@ struct UserController: RouteCollection {
         return "OK"
     }
 
-    func rating(req: Request) async throws -> String {
+    func rating(req: Request) async throws -> HTTPStatus {
         guard req.auth.has(User.self) else {
             throw Abort(.unauthorized)
         }
@@ -81,14 +78,6 @@ struct UserController: RouteCollection {
 
         try await rating.save(on: req.db)
 
-        return "OK"
+        return .ok
     }
-
-//    func delete(req: Request) async throws -> HTTPStatus {
-//        guard let todo = try await Todo.find(req.parameters.get("todoID"), on: req.db) else {
-//            throw Abort(.notFound)
-//        }
-//        try await todo.delete(on: req.db)
-//        return .noContent
-//    }
 }

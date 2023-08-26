@@ -40,6 +40,8 @@ final class Trip: Model, Content {
     @Children(for: \CityPoint.$trip)
     var path: [CityPoint]
 
+    @Timestamp(key: .deletedAt, on: .delete)
+    var deletedAt: Date?
 
     init() { }
 
@@ -65,6 +67,8 @@ extension FieldKey {
     static let date: FieldKey = "date"
     static let meetingPoint: FieldKey = "meetingPoint"
     static let contactType: FieldKey = "contactType"
+
+    static let deletedAt: FieldKey = "deletedAt"
 }
 
 extension Trip: Hashable {
