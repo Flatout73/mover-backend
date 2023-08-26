@@ -22,11 +22,8 @@ final class User: Model, Content, Authenticatable {
     @Field(key: .email)
     var email: String
 
-    @OptionalField(key: .phone)
-    var phone: String?
-
     @Field(key: .contactType)
-    var contactType: [ContactType]
+    var contactType: ContactType
 
     @OptionalField(key: .password)
     var password: String?
@@ -52,14 +49,12 @@ final class User: Model, Content, Authenticatable {
     init() { }
 
     init(id: UUID? = nil, firstName: String?, lastName: String? = nil, email: String,
-         phone: String? = nil, contactType: [ContactType] = [],
-         password: String? = nil, appleIdentifier: String? = nil,
+         contactType: ContactType, password: String? = nil, appleIdentifier: String? = nil,
          emailVerified: EmailVerificationType? = nil) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
-        self.phone = phone
         self.password = password
         self.appleIdentifier = appleIdentifier
         self.emailVerified = emailVerified
@@ -71,7 +66,6 @@ extension FieldKey {
     static let firstName: FieldKey = "firstName"
     static let lastName: FieldKey = "lastName"
     static let email: FieldKey = "email"
-    static let phone: FieldKey = "phone"
     static let appleIdentifier: FieldKey = "appleIdentifier"
     static let emailVerified: FieldKey = "emailVerified"
     static let password: FieldKey = "password"

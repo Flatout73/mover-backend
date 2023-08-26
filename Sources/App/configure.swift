@@ -3,6 +3,7 @@ import Fluent
 import FluentPostgresDriver
 import Vapor
 import Leaf
+import BindleShared
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -38,10 +39,11 @@ public func configure(_ app: Application) async throws {
 
     app.migrations.add(CreateUser(), CreateOrder(), CreateTrip(), CreateCityPoint(), CreateRating())
 
-    let user = User(id: UUID(uuidString: "669C7011-E716-492D-80AF-ADBECDAADBA1"), firstName: "Test", lastName: "Test",
-                    email: "leonid173m@gmail.com", password: "123456", emailVerified: .google)
-    user.phone = "+79123123"
-    user.contactType = [.mobile, .telegram]
+    let user = User(id: UUID(uuidString: "669C7011-E716-492D-80AF-ADBECDAADBA1"),
+                    firstName: "Test", lastName: "Test",
+                    email: "leonid173m@gmail.com",
+                    contactType: ContactType(telegram: "flatout97", mobile: "+79123123"), password: "123456",
+                    emailVerified: .google)
     user.imageURL = "https://sun6-23.userapi.com/impg/m3ied5PgFvYfeS1HskUKce-IOl0l3rK5ZdAh5A/50oYHt4zvjg.jpg?size=1024x734&quality=96&sign=118d582edf2454670748318ca1362a82&type=album"
 
     Task {

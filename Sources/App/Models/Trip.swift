@@ -23,10 +23,7 @@ final class Trip: Model, Content {
     var bagType: BagTypeCost
 
     @Field(key: .contactType)
-    var contactType: [ContactType]
-
-    @Field(key: .contactPhone)
-    var contactPhone: String
+    var contactType: ContactType
 
     @OptionalField(key: .meetingPoint)
     var meetingPoint: String?
@@ -46,13 +43,12 @@ final class Trip: Model, Content {
     init() { }
 
     init(id: UUID? = nil, date: Date, bagType: BagTypeCost,
-         contactType: [ContactType], contactPhone: String,
+         contactType: ContactType,
          meetingPoint: String? = nil, notes: String? = nil) {
         self.id = id
         self.date = date
         self.bagType = bagType
         self.contactType = contactType
-        self.contactPhone = contactPhone
         self.meetingPoint = meetingPoint
         self.notes = notes
     }
@@ -61,7 +57,6 @@ final class Trip: Model, Content {
 extension FieldKey {
     static let destination: FieldKey = "destination"
     static let bagType: FieldKey = "bagType"
-    static let contactPhone: FieldKey = "contactPhone"
     static let notes: FieldKey = "notes"
     static let user: FieldKey = "user"
     static let date: FieldKey = "date"

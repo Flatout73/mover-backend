@@ -27,27 +27,22 @@ final class Order: Model, Content {
     @OptionalField(key: .untilDate)
     var untilDate: Date?
 
-    @Field(key: .contactPhone)
-    var contactPhone: String
-
     @OptionalField(key: .notes)
     var notes: String?
 
-    @OptionalField(key: .contactType)
-    var contactType: ContactType?
+    @Field(key: .contactType)
+    var contactType: ContactType
 
     @Parent(key: .user)
     var user: User
 
     init(id: UUID? = nil, origin: String, destination: String, category: BindleShared.Category,
-         contactPhone: String, untilDate: Date? = nil, notes: String? = nil,
-         contactType: ContactType? = nil) {
+         contactType: ContactType, untilDate: Date? = nil, notes: String? = nil) {
         self.id = id
         self.origin = origin
         self.destination = destination
         self.category = category
         self.untilDate = untilDate
-        self.contactPhone = contactPhone
         self.notes = notes
         self.contactType = contactType
     }

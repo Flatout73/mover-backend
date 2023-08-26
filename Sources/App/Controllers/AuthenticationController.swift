@@ -44,6 +44,7 @@ struct AuthenticationController: RouteCollection {
         let user = existingUser ?? User(firstName: siwa.givenName,
                                         lastName: siwa.familyName,
                                         email: email ?? "",
+                                        contactType: ContactType(),
                                         password: UUID().uuidString,
                                         appleIdentifier: appleIdentity.subject.value)
         user.emailVerified = .apple
@@ -71,6 +72,7 @@ struct AuthenticationController: RouteCollection {
         let user = existingUser ?? User(firstName: googleIDToken.givenName,
                                         lastName: googleIDToken.familyName,
                                         email: email,
+                                        contactType: ContactType(),
                                         password: UUID().uuidString)
         user.emailVerified = .google
         user.imageURL = googleIDToken.picture

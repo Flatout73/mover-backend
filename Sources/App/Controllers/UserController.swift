@@ -14,6 +14,8 @@ struct UserController: RouteCollection {
         users.post("logout", use: logout)
 
         users.put("rating", use: rating)
+
+        users.post("contact", use: updateContact)
     }
 
     func me(req: Request) async throws -> UserResponse {
@@ -79,5 +81,16 @@ struct UserController: RouteCollection {
         try await rating.save(on: req.db)
 
         return .ok
+    }
+
+    func updateContact(req: Request) async throws -> UserResponse {
+        guard let user = req.auth.get(User.self) else {
+            throw Abort(.unauthorized)
+        }
+
+        let body = try req.content.decode(ContactType.self)
+        user.contactType = body
+
+        return try UserResponse(user: user)
     }
 }

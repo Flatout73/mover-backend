@@ -16,8 +16,7 @@ struct TripResponse: Content, Equatable {
     let id: UUID
     let date: Date
     let bagType: BagTypeCost
-    let contactType: [ContactType]
-    let contactPhone: String
+    let contactType: ContactType
     let meetingPoint: String?
     let notes: String?
 
@@ -30,7 +29,6 @@ struct TripResponse: Content, Equatable {
         self.date = trip.date
         self.bagType = trip.bagType
         self.contactType = trip.contactType
-        self.contactPhone = trip.contactPhone
         self.meetingPoint = trip.meetingPoint
         self.notes = trip.notes
         self.user = try UserResponse(user: trip.user)

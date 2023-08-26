@@ -14,8 +14,7 @@ struct UserResponse: Content, Equatable {
     let lastName: String?
     let rating: Float?
     let email: String
-    let phone: String?
-    let contactType: Set<ContactType>
+    let contactType: ContactType
     let imageURL: String?
 
     init(user: User) throws {
@@ -26,8 +25,7 @@ struct UserResponse: Content, Equatable {
         self.lastName = user.lastName
         self.rating = rating.isNaN ? nil : rating
         self.email = user.email
-        self.phone = user.phone
         self.imageURL = user.imageURL
-        self.contactType = Set(user.contactType)
+        self.contactType = user.contactType
     }
 }

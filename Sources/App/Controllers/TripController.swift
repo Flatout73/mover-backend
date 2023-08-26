@@ -59,10 +59,8 @@ struct TripController: RouteCollection {
             .filter(\Trip.$date >= Date())
             .group(.or, { group in
                 group
-                    .filter(\Trip.$contactPhone ~~ query)
                     .filter(\Trip.$notes, .custom("ilike"), "%\(query)%")
-
-                    //.filter(DatabaseQuery.Field.path(["bagType"], schema: "trips"), .custom("ilike"), DatabaseQuery.Value.custom("%\(query)%"))
+                    .filter(DatabaseQuery.Field.path(["contactType"], schema: "trips"), .custom("ilike"), DatabaseQuery.Value.custom("%\(query)%"))
                     .filter(User.self, \User.$firstName, .custom("ilike"), "%\(query)%")
                     .filter(User.self, \User.$lastName, .custom("ilike"), "%\(query)%")
                     .filter(User.self, \User.$email, .custom("ilike"), "%\(query)%")
@@ -177,8 +175,9 @@ struct TripController: RouteCollection {
             return cityPoint
         }
         
-        let trip = Trip(date: body.date, bagType: body.bagType, contactType: Array(body.contactType),
-                        contactPhone: body.contactPhone, meetingPoint: body.meetingPoint, notes: body.notes)
+        let trip = Trip(date: body.date, bagType: body.bagType,
+                        contactType: body.contactType,
+                        meetingPoint: body.meetingPoint, notes: body.notes)
 
         trip.$user.id = try user.requireID()
 
@@ -203,8 +202,7 @@ struct TripController: RouteCollection {
         
         trip.date = body.date
         trip.bagType = body.bagType
-        trip.contactType =  Array(body.contactType)
-        trip.contactPhone = body.contactPhone
+        trip.contactType = body.contactType
         trip.meetingPoint = body.meetingPoint
         trip.notes = body.notes
 

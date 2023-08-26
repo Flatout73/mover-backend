@@ -37,7 +37,7 @@ struct OrderController: RouteCollection {
             .group(.or, { group in
                 group.filter(\Order.$origin ~~ query)
                     .filter(\Order.$destination ~~ query)
-                    .filter(\Order.$contactPhone ~~ query)
+                    .filter(DatabaseQuery.Field.path(["contactType"], schema: "orders"), .custom("ilike"), DatabaseQuery.Value.custom("%\(query)%"))
                     .filter(\Order.$notes ~~ query)
                     .filter(User.self, \User.$firstName ~~ query)
                     .filter(User.self, \User.$lastName ~~ query)
@@ -61,9 +61,9 @@ struct OrderController: RouteCollection {
         let body = try req.content.decode(OrderRequestBody.self)
 
         let order = Order(origin: body.origin, destination: body.destination,
-                          category: body.category, contactPhone: body.contactPhone,
-                          untilDate: body.untilDate, notes: body.notes,
-                          contactType: body.contactType)
+                          category: body.category,
+                          contactType: body.contactType,
+                          untilDate: body.untilDate, notes: body.notes)
 
         order.$user.id = try user.requireID()
         try await order.save(on: req.db)
