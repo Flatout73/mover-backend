@@ -47,7 +47,7 @@ struct UserController: RouteCollection {
         return user.trips
     }
 
-    func logout(req: Request) async throws -> String {
+    func logout(req: Request) async throws -> HTTPStatus {
         guard req.auth.has(User.self) else {
             throw Abort(.unauthorized)
         }
@@ -56,7 +56,7 @@ struct UserController: RouteCollection {
         user?.password = nil
         try await user?.save(on: req.db)
 
-        return "OK"
+        return .ok
     }
 
     func rating(req: Request) async throws -> HTTPStatus {
@@ -90,7 +90,10 @@ struct UserController: RouteCollection {
 
         let body = try req.content.decode(ContactType.self)
         user.contactType = body
+        print("Updaing contact types: \(body)")
+        try await user.save(on: req.db)
 
+        try await user.$ratings.load(on: req.db)
         return try UserResponse(user: user)
     }
 }
