@@ -37,7 +37,7 @@ struct OrderController: RouteCollection {
             .group(.or, { group in
                 group.filter(\Order.$origin ~~ query)
                     .filter(\Order.$destination ~~ query)
-                    .filter(DatabaseQuery.Field.path(["contactType"], schema: "orders"), .custom("ilike"), DatabaseQuery.Value.custom("%\(query)%"))
+                    //.filter(DatabaseQuery.Field.path(["contactType"], schema: "orders"), .custom("ilike"), DatabaseQuery.Value.custom("'%\(query)%'"))
                     .filter(\Order.$notes ~~ query)
                     .filter(User.self, \User.$firstName ~~ query)
                     .filter(User.self, \User.$lastName ~~ query)

@@ -60,7 +60,7 @@ struct TripController: RouteCollection {
             .group(.or, { group in
                 group
                     .filter(\Trip.$notes, .custom("ilike"), "%\(query)%")
-                    .filter(DatabaseQuery.Field.path(["contactType"], schema: "trips"), .custom("ilike"), DatabaseQuery.Value.custom("%\(query)%"))
+                    //.filter(DatabaseQuery.Field.path(["contactType"], schema: "trips"), .custom("-> 'telegram' ilike"), DatabaseQuery.Value.custom("'%\(query)%'"))
                     .filter(User.self, \User.$firstName, .custom("ilike"), "%\(query)%")
                     .filter(User.self, \User.$lastName, .custom("ilike"), "%\(query)%")
                     .filter(User.self, \User.$email, .custom("ilike"), "%\(query)%")
