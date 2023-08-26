@@ -14,10 +14,10 @@ struct CreateTrip: AsyncMigration {
             .id()
             .field(.bagType, .dictionary(of: .int), .required)
             .field(.notes, .string)
-            .field(.date, .date)
+            .field(.date, .datetime)
             .field(.meetingPoint, .string)
             .field(.contactType, .dictionary(of: .string))
-            .field(.deletedAt, .date)
+            .field(.deletedAt, .datetime)
             .field(.user, .uuid, .references("users", "id", onDelete: .cascade))
             .create()
     }

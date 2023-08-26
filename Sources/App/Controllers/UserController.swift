@@ -71,6 +71,16 @@ struct UserController: RouteCollection {
             throw Abort(.notFound)
         }
 
+        let oldRating = try await Rating
+            .query(on: req.db)
+            .join(User.self, on: \Rating.$userTo.$id == \User.$id)
+            .filter(User.self, \.$id == userTo)
+            .filter(\Rating.$updatedAt >= Date(timeIntervalSinceNow: -24 * 60 * 60))
+            .count()
+
+        guard oldRating < 1 else {
+            throw Abort(.tooManyRequests)
+        }
 
         let rating = Rating()
         rating.$userFrom.id = try user.requireID()

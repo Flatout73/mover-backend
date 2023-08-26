@@ -16,7 +16,7 @@ struct CreateOrder: AsyncMigration {
             .field(.origin, .string, .required)
             .field(.destination, .string, .required)
             .field(.category, .string, .required)
-            .field(.untilDate, .date)
+            .field(.untilDate, .datetime)
             .field(.notes, .string)
             .field(.contactType, .dictionary(of: .string))
             .field(.user, .uuid, .references("users", "id", onDelete: .cascade))

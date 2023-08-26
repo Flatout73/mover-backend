@@ -14,6 +14,7 @@ struct CreateRating: AsyncMigration {
             .id()
             .field(.rating, .int, .required)
             .field(.comment, .string)
+            .field(.updatedAt, .datetime)
             .field(.userTo, .uuid, .references("users", "id", onDelete: .cascade))
             .field(.userFrom, .uuid, .references("users", "id", onDelete: .cascade))
             .create()

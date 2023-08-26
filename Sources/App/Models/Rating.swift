@@ -25,6 +25,9 @@ final class Rating: Model, Content {
 
     @Parent(key: .userFrom)
     var userFrom: User
+
+    @Timestamp(key: .updatedAt, on: .update)
+    var updatedAt: Date?
 }
 
 extension FieldKey {
@@ -32,4 +35,6 @@ extension FieldKey {
     static let comment: FieldKey = "comment"
     static let userTo: FieldKey = "userTo"
     static let userFrom: FieldKey = "userFrom"
+
+    static let updatedAt: FieldKey = "updatedAt"
 }

@@ -13,7 +13,7 @@ struct CreateCityPoint: AsyncMigration {
         try await database.schema("cityPoints")
             .id()
             .field(.name, .string, .required)
-            .field(.date, .date)
+            .field(.date, .datetime)
             .field(.trip, .uuid, .references("trips", "id", onDelete: .cascade))
             .create()
     }
