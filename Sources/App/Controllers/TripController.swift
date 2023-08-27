@@ -219,12 +219,16 @@ struct TripController: RouteCollection {
         return trip
     }
 
-    func fetchTrip(req: Request) async throws -> Trip {
+    func fetchTrip(req: Request) async throws -> TripResponse {
         guard let trip = try await Trip.find(req.parameters.get("tripID"), on: req.db) else {
             throw Abort(.notFound)
         }
 
-        return trip
+        try await trip.$path.load(on: req.db)
+        try await trip.$user.load(on: req.db)
+        try await trip.user.$ratings.load(on: req.db)
+
+        return try TripResponse(trip: trip)
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
