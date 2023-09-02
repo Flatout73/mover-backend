@@ -36,6 +36,9 @@ final class Order: Model, Content {
     @Parent(key: .user)
     var user: User
 
+    @Timestamp(key: .deletedAt, on: .delete)
+    var deletedAt: Date?
+
     init(id: UUID? = nil, origin: String, destination: String, category: BindleShared.Category,
          contactType: ContactType, untilDate: Date? = nil, notes: String? = nil) {
         self.id = id

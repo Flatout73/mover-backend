@@ -65,13 +65,3 @@ extension FieldKey {
 
     static let deletedAt: FieldKey = "deletedAt"
 }
-
-extension Trip: Hashable {
-    static func == (lhs: Trip, rhs: Trip) -> Bool {
-        return lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
