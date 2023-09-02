@@ -27,22 +27,30 @@ struct UserController: RouteCollection {
         return try UserResponse(user: user)
     }
 
-    func orders(req: Request) async throws -> [Order] {
+    func orders(req: Request) async throws -> [OrderResponse] {
         guard req.auth.has(User.self), let user = req.auth.get(User.self) else {
             throw Abort(.unauthorized)
         }
 
-        try await user.$orders.load(on: req.db)
 
-        return user.orders
+        return try await Order
+            .query(on: req.db)
+            .join(User.self, on: \Order.$user.$id == \User.$id)
+            .filter(User.self, \User.$id == user.requireID())
+            .with(\.$user) { user in
+                user.with(\.$ratings)
+            }
+            .sort(\.$untilDate, .descending)
+            .all()
+            .map({
+                return try OrderResponse(order: $0)
+            })
     }
 
     func trips(req: Request) async throws -> [TripResponse] {
         guard req.auth.has(User.self), let user = req.auth.get(User.self) else {
             throw Abort(.unauthorized)
         }
-
-        try await user.$trips.load(on: req.db)
 
         return try await Trip
             .query(on: req.db)

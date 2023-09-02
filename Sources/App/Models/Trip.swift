@@ -37,6 +37,9 @@ final class Trip: Model, Content {
     @Children(for: \CityPoint.$trip)
     var path: [CityPoint]
 
+    @Timestamp(key: .updatedAt, on: .update)
+    var updatedAt: Date?
+
     @Timestamp(key: .deletedAt, on: .delete)
     var deletedAt: Date?
 

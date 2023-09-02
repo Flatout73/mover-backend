@@ -36,6 +36,12 @@ final class Order: Model, Content {
     @Parent(key: .user)
     var user: User
 
+    @Timestamp(key: .createdAt, on: .create)
+    var createdAt: Date?
+
+    @Timestamp(key: .updatedAt, on: .update)
+    var updatedAt: Date?
+
     @Timestamp(key: .deletedAt, on: .delete)
     var deletedAt: Date?
 
@@ -57,4 +63,5 @@ extension FieldKey {
     static let origin: FieldKey = "origin"
     static let category: FieldKey = "category"
     static let untilDate: FieldKey = "untilDate"
+    static let createdAt: FieldKey = "createdAt"
 }
