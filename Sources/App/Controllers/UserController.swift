@@ -86,7 +86,7 @@ struct UserController: RouteCollection {
 
         let body = try req.content.decode(RatingRequestBody.self)
 
-        guard let userTo = UUID(body.userIDTo),
+        guard let userIDTo = UUID(body.userIDTo),
               let user = req.auth.get(User.self) else {
             throw Abort(.notFound)
         }
@@ -94,7 +94,7 @@ struct UserController: RouteCollection {
         let oldRating = try await Rating
             .query(on: req.db)
             .join(User.self, on: \Rating.$userTo.$id == \User.$id)
-            .filter(User.self, \.$id == userTo)
+            .filter(User.self, \.$id == userIDTo)
             .filter(\Rating.$updatedAt >= Date(timeIntervalSinceNow: -24 * 60 * 60))
             .count()
 
@@ -102,9 +102,14 @@ struct UserController: RouteCollection {
             throw Abort(.tooManyRequests)
         }
 
+        guard userIDTo != user.id,
+              try await User.find(userIDTo, on: req.db) != nil else {
+            throw Abort(.forbidden)
+        }
+
         let rating = Rating()
         rating.$userFrom.id = try user.requireID()
-        rating.$userTo.id = userTo
+        rating.$userTo.id = userIDTo
         rating.rating = body.rating
         rating.comment = body.comment
 
