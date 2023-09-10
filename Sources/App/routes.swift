@@ -2,12 +2,8 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get("tripsHtml") { req async in
-        return try! await req.view.render("trip.leaf")
-    }
-
-    app.get { req async in
-        return try! await req.view.render("index")
+    app.get { req async throws in
+        return try await req.view.render("index")
     }
 
     try app.register(collection: UserController())
