@@ -18,6 +18,7 @@ struct CreateOrder: AsyncMigration {
             .field(.category, .string, .required)
             .field(.untilDate, .datetime)
             .field(.notes, .string)
+            .field(.meetingPoint, .string)
             .field(.contactType, .dictionary(of: .string))
             .field(.createdAt, .datetime)
             .field(.updatedAt, .datetime)

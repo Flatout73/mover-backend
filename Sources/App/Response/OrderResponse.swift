@@ -14,6 +14,7 @@ struct OrderResponse: Content, Equatable {
     let contactType: ContactType
     let category: BindleShared.Category
     let notes: String?
+    let meetingPoint: String?
     let origin: String
     let destination: String
 
@@ -27,6 +28,7 @@ struct OrderResponse: Content, Equatable {
         self.notes = order.notes
         self.origin = order.origin
         self.destination = order.destination
+        self.meetingPoint = order.meetingPoint
 
         self.user = try UserResponse(user: order.user)
     }

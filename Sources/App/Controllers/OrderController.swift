@@ -147,7 +147,8 @@ struct OrderController: RouteCollection {
         let order = Order(origin: body.origin, destination: body.destination,
                           category: body.category,
                           contactType: body.contactType,
-                          untilDate: body.untilDate, notes: body.notes)
+                          untilDate: body.untilDate, notes: body.notes,
+                          meetingPoint: body.meetingPoint)
 
         order.$user.id = try user.requireID()
         try await order.save(on: req.db)

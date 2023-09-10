@@ -30,6 +30,9 @@ final class Order: Model, Content {
     @OptionalField(key: .notes)
     var notes: String?
 
+    @OptionalField(key: .meetingPoint)
+    var meetingPoint: String?
+
     @Field(key: .contactType)
     var contactType: ContactType
 
@@ -46,7 +49,7 @@ final class Order: Model, Content {
     var deletedAt: Date?
 
     init(id: UUID? = nil, origin: String, destination: String, category: BindleShared.Category,
-         contactType: ContactType, untilDate: Date? = nil, notes: String? = nil) {
+         contactType: ContactType, untilDate: Date? = nil, notes: String? = nil, meetingPoint: String? = nil) {
         self.id = id
         self.origin = origin
         self.destination = destination
@@ -54,6 +57,7 @@ final class Order: Model, Content {
         self.untilDate = untilDate
         self.notes = notes
         self.contactType = contactType
+        self.meetingPoint = meetingPoint
     }
     
     init() { }
